@@ -1,7 +1,16 @@
 {
     "name": "craftyfm/craft-feedme-filemaker",
-    "description": "Enable Filemaker Data API to be used with the Feed-Me plugin",
+    "description": "A plugin to allow Claris Filemaker Data API v2 to work with the Feed Me plugin",
     "type": "craft-plugin",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "filemaker",
+        "claris",
+        "feed me"
+    ],
     "license": "proprietary",
     "support": {
         "email": "stuart@x2network.net"
@@ -22,9 +31,10 @@
     },
     "extra": {
         "handle": "feedme-filemaker",
-        "name": "feedme-filemaker",
+        "name": "Feed Me Filemaker",
         "developer": "CraftyFm",
-        "documentationUrl": ""
+        "documentationUrl": "",
+        "class": "craftyfm\\craftfeedmefilemaker\\FeedmeFilemaker"
     },
     "scripts": {
         "check-cs": "ecs check --ansi",

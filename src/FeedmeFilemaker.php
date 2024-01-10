@@ -49,7 +49,6 @@ class FeedmeFilemaker extends Plugin
                 $event->roots['something'] = __DIR__ . '/template-two';
             }
         );
-        // $this->createOverrideFolder();
 
         // Defer most setup tasks until Craft is fully initialized
         Craft::$app->onInit(function() {
@@ -75,7 +74,6 @@ class FeedmeFilemaker extends Plugin
                 //create Basic Auth string
                 $basicAuthString = 'Basic ' . base64_encode($this->getSettings()->user .':'.$this->getSettings()->pass);
 
-
                 // Request token
                 $response = $client->request('POST', '', [
                     'headers' => [
@@ -87,28 +85,19 @@ class FeedmeFilemaker extends Plugin
                     'debug' => true,
                 ]);
 
-
-
-
-                //$data = json_decode($response->getBody()->getContents());
                 $json = $response->getBody()->getContents();
                 $data = json_decode($json);
 
                 $status = $response->getStatusCode();
 
                 $authtoken = $data->response->token;
-                //   Craft::info(dd($data));
-                //   Craft::info(dd($data->response->token));
-                //  Craft::info((string)$data);
-
 
                 if ($status === 200) {
-                    // $body = $data;
-
                     return $authtoken;
-                    // return '147a30e2bcdd3b235672e7d5eecadb6d886e7f956421e15c6722';
+
                 } else {
                     return false;
+
                 }
             }, 900);
 
@@ -124,15 +113,12 @@ class FeedmeFilemaker extends Plugin
                     'requestOptions' => [
                         'headers' => [
                             'Accept' => 'application/json',
-                            'Authorization' => 'Bearer ' . $token, //'c312f791d7eaf0425571d577f27ce0f2e0d339c355516a7bc213',
+                            'Authorization' => 'Bearer ' . $token,
                         ],
                     ],
                 ]
             ],
             ];
-
-
-
 
             // Feed back to the plugin
             FeedMe::getInstance()->setSettings((array) $settings);

@@ -12,7 +12,7 @@ class Settings extends Model
 {
     public $user = 'admin';
     public $pass = 'passw0rd123';
-    public $authURL = 'https://filemaker.com/';
+    public $authURL = 'https://fm.domain.com/fmi/data/v2/databases/mycooldb/sessions';
 
     public function defineRules(): array
     {
