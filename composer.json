@@ -15,7 +15,7 @@
     "support": {
         "email": "stuart@x2network.net"
     },
-    "version": "1.0.0-beta",
+    "version": "1.0.1",
     "require": {
         "php": ">=8.0.2",
         "craftcms/cms": "^4.5.0"
