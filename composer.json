@@ -24,8 +24,7 @@
         "handle": "feedme-filemaker",
         "name": "feedme-filemaker",
         "developer": "CraftyFm",
-        "documentationUrl": "",
-        "class": "craftyfm\\craftfeedmefilemaker\\FeedmeFilemaker"
+        "documentationUrl": ""
     },
     "scripts": {
         "check-cs": "ecs check --ansi",
