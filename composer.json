@@ -15,10 +15,11 @@
     "support": {
         "email": "stuart@x2network.net"
     },
-    "version": "1.0.1",
+    "version": "2.0.0",
     "require": {
         "php": ">=8.0.2",
-        "craftcms/cms": "^4.5.0"
+        "craftcms/cms": "^5.0.0",
+        "craftcms/feed-me": "^6.0.0"
     },
     "require-dev": {
         "craftcms/ecs": "dev-main",

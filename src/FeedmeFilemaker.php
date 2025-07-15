@@ -5,15 +5,18 @@ namespace craftyfm\craftfeedmefilemaker;
 use Craft;
 use craft\base\Model;
 use craft\base\Plugin;
-use craft\events\RegisterTemplateRootsEvent;
 use craft\feedme\events\FeedDataEvent;
 use craft\feedme\Plugin as FeedMe;
 use craft\feedme\services\DataTypes;
-use craft\web\View;
 use craftyfm\craftfeedmefilemaker\models\Settings;
 use GuzzleHttp\Client;
-use GuzzleHttp\Cookie\FileCookieJar;
+use GuzzleHttp\Exception\GuzzleException;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use yii\base\Event;
+use yii\base\Exception;
+use yii\base\InvalidConfigException;
 
 /**
  * feedme-filemaker plugin
@@ -42,94 +45,27 @@ class FeedmeFilemaker extends Plugin
     {
         parent::init();
 
-        Event::on(
-            View::class,
-            View::EVENT_REGISTER_SITE_TEMPLATE_ROOTS,
-            function(RegisterTemplateRootsEvent $event) {
-                $event->roots['something'] = __DIR__ . '/template-two';
-            }
-        );
-
         // Defer most setup tasks until Craft is fully initialized
-        Craft::$app->onInit(function() {
+        Craft::$app->onInit(function () {
             $this->attachEventHandlers();
-            // ...
-
         });
 
-        Event::on(DataTypes::class, DataTypes::EVENT_BEFORE_FETCH_FEED, function(FeedDataEvent $event) {
-
-            $token = Craft::$app->getCache()->getOrSet('api-token', function () {
-                // Create Guzzle client
-                // file to store cookie data
-                $cookieFile = '../cookie_jar.txt';
-                $cookieJar = new FileCookieJar($cookieFile, TRUE);
-                $client = new Client([
-                    'base_uri' => (string)$this->getSettings()->authURL ,
-                    'verify' => false,
-                    'cookies' => $cookieJar,
-
-                ]);
-
-                //create Basic Auth string
-                $basicAuthString = 'Basic ' . base64_encode($this->getSettings()->user .':'.$this->getSettings()->pass);
-
-                // Request token
-                $response = $client->request('POST', '', [
-                    'headers' => [
-                        'Content-Type' => 'application/json',
-                        'Authorization' => $basicAuthString
-
-                    ],
-                    ['body' => ''],
-                    'debug' => true,
-                ]);
-
-                $json = $response->getBody()->getContents();
-                $data = json_decode($json);
-
-                $status = $response->getStatusCode();
-
-                $authtoken = $data->response->token;
-
-                if ($status === 200) {
-                    return $authtoken;
-
-                } else {
-                    return false;
-
-                }
-            }, 900);
-
-
-
-            // Get the Feed Me plugin's settings
-            $settings = FeedMe::getInstance()->getSettings();
-
-            // Add the access token to the settings
-
-            $settings = [ 'feedOptions' => [
-                $event->feedId => [
-                    'requestOptions' => [
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Authorization' => 'Bearer ' . $token,
-                        ],
-                    ],
-                ]
-            ],
-            ];
-
-            // Feed back to the plugin
-            FeedMe::getInstance()->setSettings((array) $settings);
-        });
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     protected function createSettingsModel(): ?Model
     {
         return Craft::createObject(Settings::class);
     }
 
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws Exception
+     * @throws LoaderError
+     */
     protected function settingsHtml(): ?string
     {
         return Craft::$app->view->renderTemplate('feedme-filemaker/_settings.twig', [
@@ -140,7 +76,67 @@ class FeedmeFilemaker extends Plugin
 
     private function attachEventHandlers(): void
     {
-        // Register event handlers here ...
-        // (see https://craftcms.com/docs/4.x/extend/events.html to get started)
+        Event::on(DataTypes::class, DataTypes::EVENT_BEFORE_FETCH_FEED, function (FeedDataEvent $event) {
+            // Get API token directly without caching
+            $token = $this->getApiToken();
+
+            if (!$token) {
+                Craft::error('Failed to obtain API token', __METHOD__);
+                return;
+            }
+
+            // Get the Feed Me plugin's settings
+            $settings = [
+                'feedOptions' => [
+                    $event->feedId => [
+                        'requestOptions' => [
+                            'headers' => [
+                                'Accept' => 'application/json',
+                                'Authorization' => 'Bearer ' . $token,
+                            ],
+                        ],
+                    ]
+                ],
+            ];
+
+            // Feed back to the plugin
+            FeedMe::getInstance()->setSettings($settings);
+        });
+    }
+
+    private function getApiToken(): ?string
+    {
+        try {
+            $client = new Client([
+                'base_uri' => (string)$this->getSettings()->authURL,
+                'verify' => false,
+            ]);
+
+            // Create Basic Auth string
+            $basicAuthString = 'Basic ' . base64_encode($this->getSettings()->user . ':' . $this->getSettings()->pass);
+
+            // Request token
+            $response = $client->request('POST', '', [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Authorization' => $basicAuthString
+                ],
+                'body' => '',
+                'debug' => false,
+            ]);
+
+            $json = $response->getBody()->getContents();
+            $data = json_decode($json);
+
+            if ($response->getStatusCode() === 200 && isset($data->response->token)) {
+                return $data->response->token;
+            }
+
+            return null;
+
+        } catch (\Exception|GuzzleException $e) {
+            Craft::error('Failed to get API token: ' . $e->getMessage(), __METHOD__);
+            return null;
+        }
     }
 }
