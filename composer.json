@@ -18,8 +18,11 @@
     "version": "2.0.0",
     "require": {
         "php": ">=8.0.2",
+
         "craftcms/cms": "^5.0.0",
         "craftcms/feed-me": "^6.0.0"
+        "craftcms/cms": "^5.7.1"
+
     },
     "require-dev": {
         "craftcms/ecs": "dev-main",
