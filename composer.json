@@ -1,59 +1,55 @@
 {
-    "name": "craftyfm/craft-feedme-filemaker",
-    "description": "A plugin to allow Claris Filemaker Data API v2 to work with the Feed Me plugin",
-    "type": "craft-plugin",
-    "keywords": [
-        "craft",
-        "cms",
-        "craftcms",
-        "craft-plugin",
-        "filemaker",
-        "claris",
-        "feed me"
-    ],
-    "license": "proprietary",
-    "support": {
-        "email": "stuart@x2network.net"
-    },
-    "version": "2.0.0",
-    "require": {
-        "php": ">=8.0.2",
-
-        "craftcms/cms": "^5.0.0",
-        "craftcms/feed-me": "^6.0.0"
-        "craftcms/cms": "^5.7.1"
-
-    },
-    "require-dev": {
-        "craftcms/ecs": "dev-main",
-        "craftcms/phpstan": "dev-main"
-    },
-    "autoload": {
-        "psr-4": {
-            "craftyfm\\craftfeedmefilemaker\\": "src/"
-        }
-    },
-    "extra": {
-        "handle": "feedme-filemaker",
-        "name": "Feed Me Filemaker",
-        "developer": "CraftyFm",
-        "documentationUrl": "",
-        "class": "craftyfm\\craftfeedmefilemaker\\FeedmeFilemaker"
-    },
-    "scripts": {
-        "check-cs": "ecs check --ansi",
-        "fix-cs": "ecs check --ansi --fix",
-        "phpstan": "phpstan --memory-limit=1G"
-    },
-    "config": {
-        "sort-packages": true,
-        "platform": {
-            "php": "8.0.2"
-        },
-        "allow-plugins": {
-            "yiisoft/yii2-composer": true,
-            "craftcms/plugin-installer": true
-        }
+  "name": "craftyfm/craft-feedme-filemaker",
+  "description": "A plugin to allow Claris Filemaker Data API v2 to work with the Feed Me plugin",
+  "type": "craft-plugin",
+  "keywords": [
+    "craft",
+    "cms",
+    "craftcms",
+    "craft-plugin",
+    "filemaker",
+    "claris",
+    "feed me"
+  ],
+  "license": "proprietary",
+  "support": {
+    "email": "stuart@x2network.net"
+  },
+  "version": "2.0.0",
+  "require": {
+    "php": ">=8.0.2",
+    "craftcms/feed-me": "^6.0.0",
+    "craftcms/cms": "^5.7.1"
+  },
+  "require-dev": {
+    "craftcms/ecs": "dev-main",
+    "craftcms/phpstan": "dev-main"
+  },
+  "autoload": {
+    "psr-4": {
+      "craftyfm\\craftfeedmefilemaker\\": "src/"
     }
+  },
+  "extra": {
+    "handle": "feedme-filemaker",
+    "name": "Feed Me Filemaker",
+    "developer": "CraftyFm",
+    "documentationUrl": "",
+    "class": "craftyfm\\craftfeedmefilemaker\\FeedmeFilemaker"
+  },
+  "scripts": {
+    "check-cs": "ecs check --ansi",
+    "fix-cs": "ecs check --ansi --fix",
+    "phpstan": "phpstan --memory-limit=1G"
+  },
+  "config": {
+    "sort-packages": true,
+    "platform": {
+      "php": "8.0.2"
+    },
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
+  }
 }
-
